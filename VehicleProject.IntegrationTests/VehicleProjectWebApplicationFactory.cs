@@ -60,6 +60,9 @@ public class VehicleProjectWebApplicationFactory : WebApplicationFactory<Program
     public async Task InitializeAsync()
     {
         await _msSqlContainer.StartAsync();
+        using var scope = Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<VehicleProjectContext>();
+        await db.Database.MigrateAsync();
     }
 
     public new async Task DisposeAsync()
