@@ -14,7 +14,7 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<VehicleProjectContext>();
     db.Database.Migrate();
 }
-````
+```
 
     b. Creating EF Migration Bundle
 
@@ -27,7 +27,7 @@ using (var scope = app.Services.CreateScope())
       - name: Run EF Migrations
         run: ./efbundle --connection '${{secrets.DB_CONNECTION_STRING}}'
 
-````
+```
     c. Creating SQL script:
 
 ```bash
@@ -36,7 +36,7 @@ dotnet ef migrations script \
   --startup-project VehicleProject/VehicleProject.csproj \
   --configuration Release \
   --output migrations.sql
-````
+```
 
 7. Create Static web app on azure and add github source code in deployment center.
 8. Set env variables in github secrets and azure
