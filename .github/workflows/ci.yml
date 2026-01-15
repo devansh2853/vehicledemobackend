@@ -23,6 +23,9 @@ jobs:
         with:
           dotnet-version: "10.x"
 
+      - name: Restore
+        run: dotnet restore Backend.slnx
+
       - name: Build with dotnet
         run: dotnet build Backend.slnx --configuration Release --no-restore
 
