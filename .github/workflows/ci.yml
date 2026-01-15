@@ -23,11 +23,8 @@ jobs:
         with:
           dotnet-version: "10.x"
 
-      - name: Restore
-        run: dotnet restore Backend.slnx
-
       - name: Build with dotnet
-        run: dotnet build Backend.slnx --configuration Release
+        run: dotnet build Backend.slnx --configuration Release --no-restore
 
       - name: Run Unit Tests
         run: dotnet test VehicleProject.Test/VehicleProject.Test.csproj -c Release --no-build
@@ -41,7 +38,7 @@ jobs:
       - name: Create EF Migration bundle
         run: |
           dotnet tool install --global dotnet-ef
-          dotnet ef migrations bundle --project VehicleProject/VehicleProject.csproj --startup-project VehicleProject/VehicleProject.csproj --output efbundle
+          dotnet ef migrations bundle --project VehicleProject/VehicleProject.csproj --startup-project VehicleProject/VehicleProject.csproj --configuration Release --output efbundle
 
       - name: Run EF Migrations
         run: ./efbundle --connection '${{secrets.DB_CONNECTION_STRING}}'
