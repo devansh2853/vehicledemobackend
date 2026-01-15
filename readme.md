@@ -57,7 +57,7 @@ dotnet ef migrations script \
 
 ---
 
-## Frontend Deployment (Optional)
+## Frontend Deployment
 
 7. Create an Azure Static Web App
 8. Add the frontend GitHub repository in the Deployment Center
@@ -72,9 +72,3 @@ dotnet ef migrations script \
 10. Configure CORS in the backend to allow frontend access
 
 ---
-
-## Notes
-
-- Only one database migration strategy should be used per environment.
-- CI/CD pipelines should always run migrations against Release builds.
-- Secrets should never be committed to source control.
