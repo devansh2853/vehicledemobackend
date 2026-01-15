@@ -1,0 +1,44 @@
+Deployment Steps:
+
+1. Create Resource Group
+2. Create azure SQL Server
+3. Create azure SQL Database on the created Server
+4. Create azure app service and add github source code in in Deployment Center
+5. Set connection string in app service and github secrets
+6. Setup DB CI/CD in any of the following methods:
+    a. Migrating on Startup:
+
+```csharp
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<VehicleProjectContext>();
+    db.Database.Migrate();
+}
+````
+
+    b. Creating EF Migration Bundle
+
+```bash
+      - name: Create EF Migration bundle
+        run: |
+          dotnet tool install --global dotnet-ef
+          dotnet ef migrations bundle --project VehicleProject/VehicleProject.csproj --startup-project VehicleProject/VehicleProject.csproj --configuration Release --output efbundle
+
+      - name: Run EF Migrations
+        run: ./efbundle --connection '${{secrets.DB_CONNECTION_STRING}}'
+
+````
+    c. Creating SQL script:
+
+```bash
+dotnet ef migrations script \
+  --project VehicleProject/VehicleProject.csproj \
+  --startup-project VehicleProject/VehicleProject.csproj \
+  --configuration Release \
+  --output migrations.sql
+````
+
+7. Create Static web app on azure and add github source code in deployment center.
+8. Set env variables in github secrets and azure
+9. Setup CORS in backend
+
