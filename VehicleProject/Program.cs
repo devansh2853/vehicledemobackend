@@ -21,7 +21,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy  =>
                       {
-                          policy.WithOrigins("http://localhost:5173", "https://red-coast-083a6fc0f.3.azurestaticapps.net")
+                          policy.WithOrigins("http://localhost:5173", "https://witty-bay-0ed78dd00.4.azurestaticapps.net/")
                             .AllowAnyMethod()
                             .AllowAnyHeader();
                       });
