@@ -21,7 +21,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy  =>
                       {
-                          policy.WithOrigins("http://localhost:5173", "https://witty-bay-0ed78dd00.4.azurestaticapps.net/")
+                          policy.WithOrigins("http://localhost:5173", "https://witty-bay-0ed78dd00.4.azurestaticapps.net")
                             .AllowAnyMethod()
                             .AllowAnyHeader();
                       });
@@ -36,9 +36,12 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
+
+app.UseHttpsRedirection();
+
+
 
 
 app.MapControllers();
