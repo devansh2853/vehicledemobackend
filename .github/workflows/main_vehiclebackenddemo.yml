@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: read #This is required for actions/checkout
 
@@ -21,14 +21,30 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.x'
+          dotnet-version: "10.x"
+
+      - name: Restore
+        run: dotnet restore Backend.slnx
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build Backend.slnx --configuration Release --no-restore
+
+      - name: Run Unit Tests
+        run: dotnet test VehicleProject.Test/VehicleProject.Test.csproj -c Release --no-build
+
+      - name: Run Integration Tests
+        run: dotnet test VehicleProject.IntegrationTests/VehicleProject.IntegrationTests.csproj -c Release --no-build
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+        run: dotnet publish VehicleProject/VehicleProject.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp --no-build
 
+      - name: Create EF Migration bundle
+        run: |
+          dotnet tool install --global dotnet-ef
+          dotnet ef migrations bundle --project VehicleProject/VehicleProject.csproj --startup-project VehicleProject/VehicleProject.csproj --configuration Release --output efbundle
+
+      - name: Run EF Migrations
+        run: ./efbundle --connection '${{secrets.DB_CONNECTION_STRING}}'
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -47,7 +63,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -59,7 +75,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'vehiclebackenddemo'
-          slot-name: 'Production'
+          app-name: "vehiclebackenddemo"
+          slot-name: "Production"
           package: .
-          
