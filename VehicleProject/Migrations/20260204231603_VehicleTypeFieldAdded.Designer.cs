@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VehicleProject.Data;
 
@@ -10,9 +11,11 @@ using VehicleProject.Data;
 namespace VehicleProject.Migrations
 {
     [DbContext(typeof(VehicleProjectContext))]
-    partial class VehicleProjectContextModelSnapshot : ModelSnapshot
+    [Migration("20260204231603_VehicleTypeFieldAdded")]
+    partial class VehicleTypeFieldAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
