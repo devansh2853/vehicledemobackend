@@ -13,7 +13,8 @@ public class VehicleProjectContext : DbContext
     {
         modelBuilder.Entity<VehicleType>().HasData(
             new VehicleType {Id = 1, Name = "Car"},
-            new VehicleType {Id = 2, Name = "Bus"}
+            new VehicleType {Id = 2, Name = "Bus"},
+            new VehicleType {Id = 3, Name = "Truck"}
         );
     }
     public DbSet<Car> Cars {get; set;}
