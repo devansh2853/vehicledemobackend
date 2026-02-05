@@ -3,8 +3,8 @@ SET IDENTITY_INSERT VehicleTypes ON;
 MERGE INTO VehicleTypes AS Target
 USING (VALUES 
     (1, 'Car'),
-    (2, 'Bus'), 
-    (3, 'Truck')
+    (2, 'Bus'),
+    (3, 'Cycle')
 ) AS Source (Id, Name)
 ON Target.Id = Source.Id
 
