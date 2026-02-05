@@ -49,9 +49,7 @@ jobs:
       - name: Azure SQL Deploy (Seed Data)
         uses: azure/sql-action@v2
         with:
-          # Use the same secret you used for the efbundle
           connection-string: ${{ secrets.DB_CONNECTION_STRING }}
-          # Path to your script in the repository
           path: "VehicleProject/SQL_queries/vehicle_types.sql"
           action: "Execute"
 
