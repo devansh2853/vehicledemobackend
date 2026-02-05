@@ -18,8 +18,4 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.11.10" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="SQL_queries\" />
-  </ItemGroup>
-
 </Project>
