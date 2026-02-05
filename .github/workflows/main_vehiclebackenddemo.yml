@@ -46,17 +46,14 @@ jobs:
       - name: Run EF Migrations
         run: ./efbundle --connection '${{secrets.DB_CONNECTION_STRING}}'
 
-      - name: Install sqlcmd
-        run: |
-          sudo apt-get update
-          sudo ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev
-
-      - name: Run SQL seed script
-        run: |
-          /opt/mssql-tools/bin/sqlcmd \
-            -C \
-            -S "${{ secrets.DB_CONNECTION_STRING }}" \
-            -i VehicleProject/SQL_queries/vehicle_types.sql
+      - name: Azure SQL Deploy (Seed Data)
+        uses: azure/sql-action@v2
+        with:
+          # Use the same secret you used for the efbundle
+          connection-string: ${{ secrets.DB_CONNECTION_STRING }}
+          # Path to your script in the repository
+          path: "VehicleProject/SQL_queries/vehicle_types.sql"
+          action: "Execute"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
