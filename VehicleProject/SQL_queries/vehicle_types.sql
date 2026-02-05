@@ -1,2 +1,19 @@
-IF NOT EXISTS (SELECT 1 FROM VehicleTypes WHERE Id = 1) INSERT INTO VehicleTypes (Id, Name) VALUES (1, 'Car');
-IF NOT EXISTS (SELECT 1 FROM VehicleTypes WHERE Id = 2) INSERT INTO VehicleTypes (Id, Name) VALUES (2, 'Bus');
+SET IDENTITY_INSERT VehicleTypes ON;
+
+MERGE INTO VehicleTypes AS Target
+USING (VALUES 
+    (1, 'Car'),
+    (2, 'Bus'), 
+    (3, 'Truck')
+) AS Source (Id, Name)
+ON Target.Id = Source.Id
+
+-- If the ID matches but the Name is different, update the Target
+WHEN MATCHED AND Target.Name <> Source.Name THEN
+    UPDATE SET Target.Name = Source.Name
+
+-- If the ID doesn't exist at all, insert it
+WHEN NOT MATCHED BY TARGET THEN
+    INSERT (Id, Name) VALUES (Source.Id, Source.Name);
+
+SET IDENTITY_INSERT VehicleTypes OFF;
