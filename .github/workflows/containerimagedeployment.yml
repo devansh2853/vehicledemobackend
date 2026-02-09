@@ -75,7 +75,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: VehicleProject
           push: true
           tags: ${{env.AZURE_CONTAINER_REGISTRY}}.azurecr.io/${{env.CONTAINER_APP_NAME}}:${{github.sha}}
           file: VehicleProject/Dockerfile

@@ -3,8 +3,8 @@ WORKDIR /app
 EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-WORKDIR /src
-COPY . .
+WORKDIR /src/VehicleProject
+COPY VehicleProject/ .
 RUN dotnet publish "VehicleProject.csproj" -c Release -o /published /p:UseAppHost=false
 
 
