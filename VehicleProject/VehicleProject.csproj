@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <GenerateResourceUsePreserializedResources>false</GenerateResourceUsePreserializedResources>
-    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>f54a0a84-9346-4127-948a-ed765e5ecd76</UserSecretsId>
