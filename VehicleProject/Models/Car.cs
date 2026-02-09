@@ -8,7 +8,6 @@ public class Car : Vehicle
     public string? BodyType {get; set;}
     public string? Horsepower { get; set; }
     
-    public int VehicleType { get; set; }
     public Car()
     {
         // VehicleType = "Car";
