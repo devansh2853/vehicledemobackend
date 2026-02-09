@@ -1,0 +1,85 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy ASP.Net Core app to Azure Web App - vehiclebackenddemo
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  AZURE_CONTAINER_REGISTRY: vehicleapi
+  CONTAINER_APP_NAME: vehicleproject
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read #This is required for actions/checkout
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.x"
+
+      - name: Restore
+        run: dotnet restore Backend.slnx
+
+      - name: Build with dotnet
+        run: dotnet build Backend.slnx --configuration Release --no-restore
+
+      - name: Run Unit Tests
+        run: dotnet test VehicleProject.Test/VehicleProject.Test.csproj -c Release --no-build
+
+      - name: Run Integration Tests
+        run: dotnet test VehicleProject.IntegrationTests/VehicleProject.IntegrationTests.csproj -c Release --no-build
+
+      - name: Create EF Migration bundle
+        run: |
+          dotnet tool install --global dotnet-ef
+          dotnet ef migrations bundle --project VehicleProject/VehicleProject.csproj --startup-project VehicleProject/VehicleProject.csproj --configuration Release --output efbundle
+
+      - name: Run EF Migrations
+        run: ./efbundle --connection '${{secrets.DB_CONNECTION_STRING}}'
+
+      - name: Azure SQL Deploy (Seed Data)
+        uses: azure/sql-action@v2
+        with:
+          connection-string: ${{ secrets.DB_CONNECTION_STRING }}
+          path: "VehicleProject/SQL_queries/vehicle_types.sql"
+          action: "Execute"
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Login to ACR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{env.AZURE_CONTAINER_REGISTRY}}.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{env.AZURE_CONTAINER_REGISTRY}}.azurecr.io/${{env.CONTAINER_APP_NAME}}:${{github.sha}}
+
+      - name: Deploy container to Azure App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: vehiclebackendcontainer
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_CONTAINER }}
+          images: ${{env.AZURE_CONTAINER_REGISTRY}}.azurecr.io/${{env.CONTAINER_APP_NAME}}:${{ github.sha }}
